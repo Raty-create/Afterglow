@@ -1,17 +1,180 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="src">
+      <UniqueIdentifier>{633D8952-5ED3-4EA9-BCA6-D9DC76F5EAE1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{1982AAF2-F17F-426C-91A6-79F7B7F01898}</UniqueIdentifier>
     </Filter>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="src\game">
+      <UniqueIdentifier>{33A5CCB3-124A-46F5-8B95-A5068BF283B6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\platform">
+      <UniqueIdentifier>{6789CCE0-7361-4306-9572-3C3DB615E7D8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render">
+      <UniqueIdentifier>{97A3590B-619B-4507-915C-A308451B4948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{91E526DC-C4BD-412B-A9F0-5C573E767D59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{9EEA30E2-7C17-4B34-B50A-7400270C1399}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{DE037BCB-55C4-40A0-BCFB-3260C64A78F5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\Application.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClInclude Include="src\core\Application.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\Config.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\ScreenState.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClCompile Include="src\core\Time.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClInclude Include="src\core\Time.h">
+      <Filter>src\core</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\BatteryPickup.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\BatteryPickup.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\ExitDoor.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\ExitDoor.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Game.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Game.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game\Interactable.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Lantern.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Lantern.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Level.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Level.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Lever.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Lever.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Monster.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Monster.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Note.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Note.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\game\Player.cpp">
+      <Filter>src\game</Filter>
+    </ClCompile>
+    <ClInclude Include="src\game\Player.h">
+      <Filter>src\game</Filter>
+    </ClInclude>
+    <ClCompile Include="src\platform\Input.cpp">
+      <Filter>src\platform</Filter>
+    </ClCompile>
+    <ClInclude Include="src\platform\Input.h">
+      <Filter>src\platform</Filter>
+    </ClInclude>
+    <ClCompile Include="src\platform\Window.cpp">
+      <Filter>src\platform</Filter>
+    </ClCompile>
+    <ClInclude Include="src\platform\Window.h">
+      <Filter>src\platform</Filter>
+    </ClInclude>
+    <ClCompile Include="src\render\Camera.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClInclude Include="src\render\Camera.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClCompile Include="src\render\Mesh.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClInclude Include="src\render\Mesh.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClCompile Include="src\render\Renderer.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClInclude Include="src\render\Renderer.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClCompile Include="src\render\Shader.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClInclude Include="src\render\Shader.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
+    <ClCompile Include="src\ui\HUD.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClInclude Include="src\ui\HUD.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClCompile Include="src\ui\ScreenOverlay.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClInclude Include="src\ui\ScreenOverlay.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <None Include="shaders\scene.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\scene.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ui.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\ui.vert">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\models\.gitkeep" />
+    <None Include="assets\textures\.gitkeep" />
+    <None Include="assets\audio\.gitkeep" />
+    <None Include="assets\notes\.gitkeep" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\OpenGLHeaders.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

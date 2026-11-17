@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Afterglow/Afterglow.vcxproj" />
+  <Project Path="Afterglow/Afterglow.vcxproj" Id="1e32f147-1453-49c4-86b1-0860eb04b502" />
 </Solution>
