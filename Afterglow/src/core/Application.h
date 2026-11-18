@@ -3,6 +3,7 @@
 #include "core/ScreenState.h"
 #include "core/Time.h"
 #include "platform/Input.h"
+#include "render/Camera.h"
 
 namespace ag
 {
@@ -39,6 +40,7 @@ namespace ag
 
         Input           m_input;
         Time            m_time;
+        Camera          m_mapCamera; // 이동 구현 전 맵 확인용 고정 시점.
         ScreenState     m_screen  = ScreenState::Title;
         bool            m_running = false;
     };

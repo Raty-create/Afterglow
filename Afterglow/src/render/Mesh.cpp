@@ -94,7 +94,7 @@ namespace ag
         std::vector<GLfloat> verts;
         std::vector<GLuint> indices;
 
-        MakeBoxVerts(width, height, depth, glm::vec3(0.25f), verts, indices);
+        MakeBoxVerts(width, height, depth, glm::vec3(1.0f), verts, indices);
         Upload(verts, indices);
         return IsValid();
     }

@@ -29,8 +29,9 @@ namespace ag
         if (!m_game->Initialize())
             return false;
 
+        m_mapCamera.SetPosition(m_game->Level().SpawnPosition());
         m_time.Reset();
-        m_screen  = ScreenState::Title;
+        m_screen  = ScreenState::Playing;
         m_running = true;
         return true;
     }
@@ -75,8 +76,11 @@ namespace ag
 
     void Application::Render()
     {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        m_renderer->BeginScene(m_mapCamera);
+        m_renderer->DrawLevel(m_game->Level());
+        m_renderer->EndScene();
     }
 
     void Application::Shutdown()

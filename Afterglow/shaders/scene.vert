@@ -12,11 +12,12 @@ out vec3 vColor;
 out vec3 vNormal;
 
 uniform mat4 model, view, projection;
+uniform vec3 uObjectColor;
 
 void main() {
 	vWorldPos = vec3(model * vec4(aPos, 1.0f));
 	vNormal = mat3(transpose(inverse(model))) * aNormal;
-	vColor = aColor;
+	vColor = aColor * uObjectColor;
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
