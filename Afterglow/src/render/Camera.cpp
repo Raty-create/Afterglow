@@ -6,11 +6,6 @@
 
 namespace ag
 {
-    namespace
-    {
-        constexpr float kDegToRad = 3.14159265358979f / 180.0f;
-    }
-
     void Camera::AddLook(float deltaXDeg, float deltaYDeg)
     {
         m_yawDeg += deltaXDeg;
@@ -25,14 +20,14 @@ namespace ag
 
     glm::vec3 Camera::Forward() const
     {
-        const float yaw = m_yawDeg * kDegToRad;
-        const float pitch = m_pitchDeg * kDegToRad;
+        const float yaw = glm::radians(m_yawDeg);
+        const float pitch = glm::radians(m_pitchDeg);
         return { std::sin(yaw) * std::cos(pitch), std::sin(pitch), std::cos(yaw) * std::cos(pitch) };
     }
 
     glm::vec3 Camera::Right() const
     {
-        const float yaw = m_yawDeg * kDegToRad;
+        const float yaw = glm::radians(m_yawDeg);
         return { std::cos(yaw), 0.0f, -std::sin(yaw) };
     }
 

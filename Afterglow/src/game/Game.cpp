@@ -6,6 +6,7 @@ namespace ag
 {
     bool Game::Initialize()
     {
+        m_level.Initialize();
         Reset();
         return true;
     }

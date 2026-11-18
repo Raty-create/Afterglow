@@ -24,7 +24,7 @@ namespace ag
         glm::mat4 ProjectionMatrix(float aspect) const;
 
     private:
-        glm::vec3  m_position{};
+        glm::vec3 m_position{};
         float m_yawDeg   = 0.0f;   // 좌우 회전 (y축)
         float m_pitchDeg = 0.0f;   // 상하 회전
         float m_fovYDeg  = 70.0f;

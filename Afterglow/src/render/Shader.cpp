@@ -12,9 +12,6 @@ namespace ag
         Destroy();
     }
 
-    // TODO(구현): glCreateShader / glShaderSource / glCompileShader 로 컴파일하고
-    //             glCreateProgram / glAttachShader / glLinkProgram 으로 링크한다.
-    //             실패 시 로그를 남기고 false를 반환한다.
     bool Shader::LoadFromFiles(const char* vertexPath, const char* fragmentPath)
     {
         const auto ReadSource = [](const char* path, std::string& source)
