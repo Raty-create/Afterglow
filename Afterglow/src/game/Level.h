@@ -36,6 +36,7 @@ namespace ag
     {
     public:
         void Initialize();
+        bool IntersectsWall(const glm::vec3& center, const glm::vec3& halfSize) const;
         const std::vector<Wall>& Walls() const { return m_walls; }
         const std::vector<Wall>& Surfaces() const { return m_surfaces; }
         const glm::vec3& SpawnPosition() const { return m_spawnPosition; }

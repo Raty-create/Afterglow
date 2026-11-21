@@ -28,7 +28,7 @@ namespace ag
         if (m_escaped || m_caught)
             return;
 
-        m_player.Update(deltaSeconds, input);
+        m_player.Update(deltaSeconds, input, m_level);
     }
 
     void Game::UpdateLanternInput(const Input& input)

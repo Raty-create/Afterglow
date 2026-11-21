@@ -109,4 +109,20 @@ namespace ag
             AddSegment(cursor, length * 0.5f + cornerExtension, 0.0f, room.height);
         }
     }
+
+    bool Level::IntersectsWall(const glm::vec3& center, const glm::vec3& halfSize) const
+    {
+        for (const Wall& wall : m_walls)
+        {
+            const glm::vec3 distance = glm::abs(center - wall.center);
+            const glm::vec3 reach = halfSize + wall.size * 0.5f;
+
+            if (distance.x < reach.x && distance.y < reach.y && distance.z < reach.z)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
