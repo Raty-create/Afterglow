@@ -32,10 +32,10 @@ namespace ag
         m_keyDown[keyCode] = false;
     }
 
-    void Input::OnMouseMove(int deltaX, int deltaY)
+    void Input::OnMouseMove(float deltaX, float deltaY)
     {
-        m_mouseDeltaX += static_cast<float>(deltaX);
-        m_mouseDeltaY += static_cast<float>(deltaY);
+        m_mouseDeltaX += deltaX;
+        m_mouseDeltaY += deltaY;
     }
 
     void Input::OnMouseWheel(float delta)

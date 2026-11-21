@@ -8,7 +8,8 @@ namespace ag
 {
     void Camera::AddLook(float deltaXDeg, float deltaYDeg)
     {
-        m_yawDeg += deltaXDeg;
+        // +Z를 볼 때 뷰 행렬의 오른쪽은 -X 방향이다.
+        m_yawDeg = std::fmod(m_yawDeg - deltaXDeg, 360.0f);
         m_pitchDeg -= deltaYDeg;
 
         // 위아래를 완전히 뒤집지 않도록 제한한다.
@@ -28,7 +29,7 @@ namespace ag
     glm::vec3 Camera::Right() const
     {
         const float yaw = glm::radians(m_yawDeg);
-        return { std::cos(yaw), 0.0f, -std::sin(yaw) };
+        return { -std::cos(yaw), 0.0f, std::sin(yaw) };
     }
 
     glm::mat4 Camera::ViewMatrix() const

@@ -50,6 +50,11 @@ namespace ag
 		glfwGetFramebufferSize(m_handle, &m_width, &m_height);
 
 		glfwSetWindowUserPointer(m_handle, this);
+		glfwSetWindowFocusCallback(m_handle, [](GLFWwindow* handle, int)
+			{
+				auto* window = static_cast<Window*>(glfwGetWindowUserPointer(handle));
+				window->m_hasCursorSample = false;
+			});
 		glfwSetKeyCallback(m_handle, [](GLFWwindow* handle, int key, int scancode, int action, int mods)
 			{
 				auto* window = static_cast<Window*>(glfwGetWindowUserPointer(handle));
@@ -81,6 +86,12 @@ namespace ag
 		return !m_handle || glfwWindowShouldClose(m_handle);
 	}
 
+	void Window::CaptureCursor()
+	{
+		glfwSetInputMode(m_handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_hasCursorSample = false;
+	}
+
 	bool Window::PumpMessages()
 	{
 		glfwPollEvents();
@@ -88,6 +99,17 @@ namespace ag
 			return false;
 
 		glfwGetFramebufferSize(m_handle, &m_width, &m_height);
+		if (m_input && glfwGetWindowAttrib(m_handle, GLFW_FOCUSED)
+			&& glfwGetInputMode(m_handle, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
+		{
+			double x, y;
+			glfwGetCursorPos(m_handle, &x, &y);
+			if (m_hasCursorSample)
+				m_input->OnMouseMove(static_cast<float>(x - m_cursorX), static_cast<float>(y - m_cursorY));
+			m_cursorX = x;
+			m_cursorY = y;
+			m_hasCursorSample = true;
+		}
 		return true;
 	}
 

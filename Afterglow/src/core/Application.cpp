@@ -29,9 +29,9 @@ namespace ag
         if (!m_game->Initialize())
             return false;
 
-        m_mapCamera.SetPosition(m_game->Level().SpawnPosition());
         m_time.Reset();
         m_screen  = ScreenState::Playing;
+        m_window->CaptureCursor();
         m_running = true;
         return true;
     }
@@ -72,13 +72,16 @@ namespace ag
             m_running = false;
             return;
         }
+
+        if (m_screen == ScreenState::Playing)
+            m_game->Update(deltaSeconds, m_input);
     }
 
     void Application::Render()
     {
         glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_renderer->BeginScene(m_mapCamera);
+        m_renderer->BeginScene(m_game->Player().ViewCamera());
         m_renderer->DrawLevel(m_game->Level());
         m_renderer->EndScene();
     }

@@ -13,6 +13,7 @@ namespace ag
 
     void Game::Reset()
     {
+        m_player.Reset(m_level.SpawnPosition());
         m_nextLeverIndex = 0;
         m_escaped        = false;
         m_caught         = false;
@@ -26,6 +27,8 @@ namespace ag
     {
         if (m_escaped || m_caught)
             return;
+
+        m_player.Update(deltaSeconds, input);
     }
 
     void Game::UpdateLanternInput(const Input& input)

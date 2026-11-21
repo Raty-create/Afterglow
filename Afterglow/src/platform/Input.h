@@ -12,7 +12,7 @@ namespace ag
         /* --- 플랫폼 계층에서 호출 --- */
         void OnKeyDown(int keyCode);
         void OnKeyUp(int keyCode);
-        void OnMouseMove(int deltaX, int deltaY);
+        void OnMouseMove(float deltaX, float deltaY);
         void OnMouseWheel(float delta);
         void OnMouseButton(int button, bool down);
 
