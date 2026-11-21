@@ -83,6 +83,7 @@ namespace ag
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         m_renderer->BeginScene(m_game->Player().ViewCamera());
         m_renderer->DrawLevel(m_game->Level());
+        m_renderer->DrawHeldLantern();
         m_renderer->EndScene();
     }
 

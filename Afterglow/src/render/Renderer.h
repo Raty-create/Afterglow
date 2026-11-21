@@ -24,6 +24,7 @@ namespace ag
         void BeginScene(const Camera& camera, const Lantern& lantern, const glm::vec3& lanternDirection);
         void BeginScene(const Camera& camera);
         void DrawLevel(const Level& level);
+        void DrawHeldLantern();
 
         void DrawMesh(const Mesh& mesh, const glm::mat4& model, const glm::vec3& color);
 
