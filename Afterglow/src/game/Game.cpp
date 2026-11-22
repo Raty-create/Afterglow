@@ -4,6 +4,11 @@
 
 namespace ag
 {
+    namespace
+    {
+        constexpr std::array TestLeverOrder{ LeverId::Utilities, LeverId::Exhibition, LeverId::Lab };
+    }
+
     bool Game::Initialize()
     {
         m_level.Initialize();
@@ -22,6 +27,10 @@ namespace ag
             m_batteries[i].position = batteryPositions[i];
             m_batteries[i].available = true;
         }
+        const auto& leverPositions = m_level.LeverPositions();
+        m_levers[0] = { LeverId::Exhibition, leverPositions[0], false };
+        m_levers[1] = { LeverId::Lab, leverPositions[1], false };
+        m_levers[2] = { LeverId::Utilities, leverPositions[2], false };
         m_nextLeverIndex = 0;
         m_escaped        = false;
         m_caught         = false;
@@ -70,37 +79,67 @@ namespace ag
             return;
 
         const auto& camera = m_player.ViewCamera();
-        BatteryPickup* target = nullptr;
         float nearestDistance = 2.0f;
+        BatteryPickup* targetBattery = nullptr;
+        Lever* targetLever = nullptr;
+
+        const auto isCloserTarget = [&](const glm::vec3& position)
+            {
+                const glm::vec3 offset = position - camera.Position();
+                const float distance = glm::length(offset);
+                if (distance <= 0.001f || distance > nearestDistance)
+                    return false;
+
+                // 시선 중심에서 약 26도 안에 있는 것만 선택한다.
+                if (glm::dot(camera.Forward(), offset / distance) < 0.9f)
+                    return false;
+
+                // 벽 뒤에서의 선택은 차단한다.
+                if (m_level.BlocksInteraction(camera.Position(), position))
+                    return false;
+
+                nearestDistance = distance;
+                return true;
+            };
 
         for (auto& battery : m_batteries)
         {
-            if (!battery.available)
-                continue;
-
-            const glm::vec3 offset = battery.position - camera.Position();
-            const float distance = glm::length(offset);
-            if (distance <= 0.001f || distance > nearestDistance)
-                continue;
-
-            // 시선 중심에서 약 26도 안에 있는 배터리만 선택한다.
-            if (glm::dot(camera.Forward(), offset / distance) < 0.9f)
-                continue;
-
-            target = &battery;
-            nearestDistance = distance;
+            if (battery.available && isCloserTarget(battery.position))
+                targetBattery = &battery;
         }
 
-        if (target)
+        for (auto& lever : m_levers)
         {
-            target->available = false;
+            if (isCloserTarget(lever.position))
+                targetLever = &lever;
+        }
+
+        if (targetLever)
+            TryActivateLever(*targetLever);
+        else if (targetBattery)
+        {
+            targetBattery->available = false;
             ++m_spareBatteries;
         }
     }
 
-    void Game::UpdateLevers(const Input& input)
+    void Game::TryActivateLever(Lever& lever)
     {
-        
+        const auto next = static_cast<std::size_t>(m_nextLeverIndex);
+        if (lever.raised || next >= TestLeverOrder.size())
+            return;
+
+        if (lever.id == TestLeverOrder[next])
+        {
+            lever.raised = true;
+            ++m_nextLeverIndex;
+            return;
+        }
+
+        for (auto& item : m_levers)
+            item.raised = false;
+
+        m_nextLeverIndex = 0;
     }
 
     /*bool Game::IsLanternVisibleToMonster() const

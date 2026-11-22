@@ -8,6 +8,7 @@ namespace ag
     class BatteryPickup;
     class Camera;
     class Lantern;
+    class Lever;
     class Mesh;
     class Level;
     class Player;
@@ -28,6 +29,7 @@ namespace ag
         void BeginScene(const Camera& camera);
         void DrawLevel();
         void DrawBatteryPickup(const BatteryPickup& battery);
+        void DrawLever(const Lever& lever);
         void DrawPlayerBody(const Player& player, const Lantern& lantern);
         void DrawHeldLantern(const Lantern& lantern);
 
@@ -41,6 +43,8 @@ namespace ag
         Mesh   m_cube;
         Mesh   m_levelMesh;
         Mesh   m_batteryMesh;
+        Mesh   m_leverHousingMesh;
+        Mesh   m_leverHandleMesh;
         Mesh   m_heldLanternMesh;
         int    m_width  = 0;
         int    m_height = 0;

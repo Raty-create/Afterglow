@@ -6,6 +6,7 @@
 #include "render/Mesh.h"
 #include "game/Level.h"
 #include "game/Lantern.h"
+#include "game/Lever.h"
 #include "game/Player.h"
 
 namespace ag
@@ -33,6 +34,15 @@ namespace ag
             { { 0.25f, -0.33f, -0.48f }, { 0.12f, 0.03f, 0.12f }, { 0.21f, 0.23f, 0.24f } },
             { { 0.25f, -0.255f, -0.48f }, { 0.09f, 0.12f, 0.09f }, { 1.00f, 0.75f, 0.35f } }
         };
+        const Wall LeverHousingParts[] = {
+            { { 0.0f, 0.0f, 0.08f }, { 0.44f, 0.64f, 0.09f }, { 0.36f, 0.39f, 0.39f } },
+            { { 0.0f, 0.0f, 0.03f }, { 0.36f, 0.53f, 0.055f }, { 0.55f, 0.56f, 0.48f } },
+            { { 0.0f, 0.0f, 0.0f }, { 0.16f, 0.16f, 0.08f }, { 0.23f, 0.26f, 0.26f } }
+        };
+        const Wall LeverHandleParts[] = {
+            { { 0.0f, 0.13f, 0.0f }, { 0.05f, 0.30f, 0.05f }, { 0.59f, 0.60f, 0.58f } },
+            { { 0.0f, 0.28f, 0.0f }, { 0.20f, 0.08f, 0.08f }, { 0.76f, 0.32f, 0.17f } }
+        };
 
         bool UploadBoxSurface(Mesh& mesh, std::span<const Wall> boxes)
         {
@@ -55,13 +65,17 @@ namespace ag
         return m_sceneShader.LoadFromFiles("shaders/scene.vert", "shaders/scene.frag")
             && m_cube.CreateCube(1.0f, 1.0f, 1.0f)
             && UploadBoxSurface(m_batteryMesh, BatteryParts)
-            && UploadBoxSurface(m_heldLanternMesh, HeldLanternParts);
+            && UploadBoxSurface(m_heldLanternMesh, HeldLanternParts)
+            && UploadBoxSurface(m_leverHousingMesh, LeverHousingParts)
+            && UploadBoxSurface(m_leverHandleMesh, LeverHandleParts);
     }
 
     void Renderer::Shutdown()
     {
         m_levelMesh.Destroy();
         m_batteryMesh.Destroy();
+        m_leverHousingMesh.Destroy();
+        m_leverHandleMesh.Destroy();
         m_heldLanternMesh.Destroy();
         m_cube.Destroy();
         m_sceneShader.Destroy();
@@ -129,6 +143,21 @@ namespace ag
             return;
 
         DrawMesh(m_batteryMesh, glm::translate(glm::mat4(1.0f), battery.position), glm::vec3(1.0f));
+    }
+
+    void Renderer::DrawLever(const Lever& lever)
+    {
+        const glm::mat4 base = glm::translate(glm::mat4(1.0f), lever.position);
+        DrawMesh(m_leverHousingMesh, base, glm::vec3(1.0f));
+
+        // 손잡이의 두 자세 모두 방 안쪽(-Z)을 향한다.
+        const float angle = glm::radians(lever.raised ? -30.0f : -145.0f);
+        const glm::mat4 pivot = glm::translate(base, { 0.0f, 0.0f, -0.035f });
+        DrawMesh(m_leverHandleMesh, glm::rotate(pivot, angle, { 1.0f, 0.0f, 0.0f }), glm::vec3(1.0f));
+
+        const glm::mat4 indicator = glm::scale(glm::translate(base, { 0.125f, 0.185f, 0.0f }), { 0.07f, 0.07f, 0.04f });
+        const glm::vec3 color = lever.raised ? glm::vec3(0.30f, 0.70f, 0.52f) : glm::vec3(0.76f, 0.39f, 0.20f);
+        DrawMesh(m_cube, indicator, color);
     }
 
     void Renderer::DrawPlayerBody(const Player& player, const Lantern& lantern)

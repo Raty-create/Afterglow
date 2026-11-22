@@ -34,6 +34,7 @@ namespace ag
         const ag::Monster& Monster() const { return m_monster; }
         const ag::Lantern& Lantern() const { return m_lantern; }
         const auto& Batteries() const { return m_batteries; }
+        const auto& Levers() const { return m_levers; }
         int SpareBatteries() const { return m_spareBatteries; }
 
         int  RaisedLeverCount() const;
@@ -44,7 +45,7 @@ namespace ag
     private:
         void UpdateLanternInput(const Input& input);
         void UpdateInteraction(const Input& input);
-        void UpdateLevers(const Input& input);
+        void TryActivateLever(Lever& lever);
         bool IsLanternVisibleToMonster() const;
 
         ag::Level   m_level;

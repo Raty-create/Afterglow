@@ -42,6 +42,7 @@ namespace ag
     public:
         void Initialize();
         bool IntersectsWall(const glm::vec3& center, const glm::vec3& halfSize) const;
+        bool BlocksInteraction(const glm::vec3& from, const glm::vec3& to) const;
         bool TryGetFloor(glm::vec2 position, float currentY, float& floorY) const;
         bool ReachedExit(const glm::vec3& feet) const;
         const std::vector<Wall>& Walls() const { return m_walls; }
@@ -49,6 +50,7 @@ namespace ag
         const std::vector<Wall>& Fixtures() const { return m_fixtures; }
         const glm::vec3& SpawnPosition() const { return m_spawnPosition; }
         const auto& BatteryPositions() const { return m_batteryPositions; }
+        const auto& LeverPositions() const { return m_leverPositions; }
 
     private:
         struct WalkSurface
@@ -67,6 +69,7 @@ namespace ag
         std::vector<WalkSurface> m_walkSurfaces;
         glm::vec3 m_spawnPosition{ 0.0f, config::PlayerEyeHeight, -2.0f };
         std::array<glm::vec3, config::BatteryPickupCount> m_batteryPositions{};
+        std::array<glm::vec3, config::LeverCount> m_leverPositions{};
 
         void AddRoom(const RoomDesc& room, const std::vector<DoorwayDesc>& doors = {});
         void AddLobbyWing();

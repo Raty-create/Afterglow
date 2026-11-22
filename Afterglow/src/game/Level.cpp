@@ -16,6 +16,13 @@ namespace ag
         const glm::vec3 FloorColor{ 0.24f, 0.28f, 0.30f };
         const glm::vec3 CeilingColor{ 0.68f, 0.70f, 0.69f };
 
+        glm::vec3 LeverOnNorthWall(const RoomDesc& room, float x)
+        {
+            constexpr float mountHeight = 1.25f;
+            constexpr float faceOffset = 0.12f;
+            return { x, room.floorY + mountHeight, room.center.y + room.size.y * 0.5f - faceOffset };
+        }
+
         bool IsPositive(float value)
         {
             return std::isfinite(value) && value > 0.0f;
@@ -190,6 +197,9 @@ namespace ag
             { 18.4f, 0.15f, 15.7f },
             { 8.6f, 0.15f, 40.3f }
         }};
+
+        m_leverPositions[1] = LeverOnNorthWall(lab, 3.8f);
+        m_leverPositions[2] = LeverOnNorthWall(utilities, 8.6f);
         AddLobbyWing();
     }
 
@@ -227,8 +237,10 @@ namespace ag
             { WallSide::West, 2.0f, 2.4f, doorHeight, balconyHeight },
             { WallSide::East, 3.0f, 2.0f, doorHeight, balconyHeight }
         });
-        AddRoom({ { -14.0f, -12.5f }, { 12.0f, 15.0f }, 3.0f, { 0.58f, 0.54f, 0.47f } },
-            { { WallSide::East, 0.5f, 2.4f, doorHeight } });
+        const RoomDesc exhibition{ { -14.0f, -12.5f }, { 12.0f, 15.0f }, 3.0f, { 0.58f, 0.54f, 0.47f } };
+        AddRoom(exhibition, {
+            { WallSide::East, 0.5f, 2.4f, doorHeight } });
+        m_leverPositions[0] = LeverOnNorthWall(exhibition, -13.0f);
         AddRoom({ { 22.0f, -7.0f }, { 10.0f, 20.0f }, 3.0f, { 0.58f, 0.59f, 0.49f } }, {
             { WallSide::West, -4.0f, 2.0f, doorHeight },
             { WallSide::North, diningKitchenDoorX - 22.0f, 2.0f, doorHeight }
@@ -459,6 +471,45 @@ namespace ag
         return std::abs(feet.y - LobbyFloorY) < 0.05f
             && std::abs(feet.x - FrontDoorX) < FrontDoorWidth * 0.5f
             && feet.z < FrontDoorZ - 0.25f;
+    }
+
+    bool Level::BlocksInteraction(const glm::vec3& from, const glm::vec3& to) const
+    {
+        const glm::vec3 direction = to - from;
+        constexpr float epsilon = 0.0001f;
+        const auto blocks = [&](const Wall& box)
+        {
+            const glm::vec3 min = box.center - box.size * 0.5f;
+            const glm::vec3 max = box.center + box.size * 0.5f;
+            float enter = 0.0f;
+            float exit = 1.0f;
+
+            for (int axis = 0; axis < 3; ++axis)
+            {
+                if (std::abs(direction[axis]) < epsilon)
+                {
+                    if (from[axis] < min[axis] || from[axis] > max[axis])
+                        return false;
+                    continue;
+                }
+
+                float a = (min[axis] - from[axis]) / direction[axis];
+                float b = (max[axis] - from[axis]) / direction[axis];
+                if (a > b)
+                    std::swap(a, b);
+
+                enter = std::max(enter, a);
+                exit = std::min(exit, b);
+                if (enter >= exit)
+                    return false;
+            }
+
+            return exit > epsilon && enter < 1.0f - epsilon;
+        };
+
+        return std::any_of(m_walls.begin(), m_walls.end(), blocks)
+            || std::any_of(m_fixtures.begin(), m_fixtures.end(), blocks)
+            || std::any_of(m_surfaces.begin(), m_surfaces.end(), blocks);
     }
 
     bool Level::IntersectsWall(const glm::vec3& center, const glm::vec3& halfSize) const

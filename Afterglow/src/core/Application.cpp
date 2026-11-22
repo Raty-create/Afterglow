@@ -93,6 +93,8 @@ namespace ag
         m_renderer->DrawLevel();
         for (const auto& battery : m_game->Batteries())
             m_renderer->DrawBatteryPickup(battery);
+        for (const auto& lever : m_game->Levers())
+            m_renderer->DrawLever(lever);
         m_renderer->DrawPlayerBody(m_game->Player(), m_game->Lantern());
         m_renderer->DrawHeldLantern(m_game->Lantern());
         m_renderer->EndScene();
