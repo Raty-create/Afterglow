@@ -81,9 +81,10 @@ namespace ag
     {
         glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_renderer->BeginScene(m_game->Player().ViewCamera());
+        const auto& camera = m_game->Player().ViewCamera();
+        m_renderer->BeginScene(camera, m_game->Lantern(), camera.Forward());
         m_renderer->DrawLevel(m_game->Level());
-        m_renderer->DrawHeldLantern();
+        m_renderer->DrawHeldLantern(m_game->Lantern());
         m_renderer->EndScene();
     }
 

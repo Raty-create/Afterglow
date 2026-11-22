@@ -66,6 +66,12 @@ namespace ag
 				else if (action == GLFW_RELEASE)
 					window->m_input->OnKeyUp(key);
 			});
+		glfwSetScrollCallback(m_handle, [](GLFWwindow* handle, double xoffset, double yoffset)
+			{
+				auto* window = static_cast<Window*>(glfwGetWindowUserPointer(handle));
+				if (window->m_input)
+					window->m_input->OnMouseWheel(static_cast<float>(yoffset));
+			});
 
 		return true;
 	}

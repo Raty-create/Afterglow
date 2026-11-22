@@ -14,7 +14,7 @@ uniform vec3 uLightPos, uLightDir, uLightColor, uEyeDir;
 uniform float uLightRange;       // 빛이 닿는 거리(m)
 uniform float uLightIntensity;   // 0.0 ~ 1.0 (랜턴 밝기)
 
-const float KA = 0.2f, KS = 0.5f, SHININESS = 64.0f;
+const float /*KA = 0.2f,*/ KS = 0.5f, SHININESS = 64.0f;
 
 // Blinn-Phong
 void main() {
@@ -23,7 +23,7 @@ void main() {
 		return;
 	}
 	if (uLightOn == 0) {
-		fragColor = vec4(vColor * KA, 1.0f);
+		fragColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		return;
 	}
 
@@ -42,11 +42,11 @@ void main() {
 
 	// 원뿔 마스크: 랜턴이 비추는 방향에서 벗어나면 어두워진다.
     float cosAngle = dot(normalize(-lightDir), normalize(uLightDir));
-    float cone = smoothstep(0.72, 0.94, cosAngle);
+    float cone = smoothstep(0.55, 0.94, cosAngle);
 
 	float diff = max(dot(N, L), 0.0f) * attenuation * cone * uLightIntensity;
-	float spec = (diff > 0.0f) ? pow(max(dot(N, H), 0.0f), SHININESS) * KS : 0.0f;
+	float spec = pow(max(dot(N, H), 0.0f), SHININESS) * KS * diff;
 
-	vec3 result = vColor * (KA + (1.0f - KA) * diff) * uLightColor + spec * uLightColor;
+	vec3 result = (vColor * diff + vec3(spec)) * uLightColor;
 	fragColor = vec4(result, 1.0);
 }

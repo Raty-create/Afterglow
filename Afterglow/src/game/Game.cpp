@@ -28,12 +28,17 @@ namespace ag
         if (m_escaped || m_caught)
             return;
 
+        UpdateLanternInput(input);
         m_player.Update(deltaSeconds, input, m_level);
     }
 
     void Game::UpdateLanternInput(const Input& input)
     {
-        
+        const float wheel = input.WheelDelta();
+        if (wheel > 0.0f)
+            m_lantern.StepBrightness(+1);
+        else if (wheel < 0.0f)
+            m_lantern.StepBrightness(-1);
     }
 
     void Game::UpdateInteraction(const Input& input)
