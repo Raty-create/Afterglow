@@ -20,7 +20,7 @@ namespace ag
 
         void Update(float deltaSeconds);
 
-        void Charge();
+        float Charge() const;
         void Refill();
 
     private:

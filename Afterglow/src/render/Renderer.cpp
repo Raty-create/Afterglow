@@ -1,5 +1,6 @@
 #include "render/Renderer.h"
 
+#include "game/BatteryPickup.h"
 #include "render/Camera.h"
 #include "render/Mesh.h"
 #include "game/Level.h"
@@ -72,15 +73,38 @@ namespace ag
     void Renderer::DrawLevel(const Level& level)
     {
         const auto DrawBox = [this](const Wall& box)
-        {
-            const glm::mat4 model = glm::translate(glm::mat4(1.0f), box.center)
-                * glm::scale(glm::mat4(1.0f), box.size);
-            DrawMesh(m_cube, model, box.color);
-        };
+            {
+                const glm::mat4 model = glm::translate(glm::mat4(1.0f), box.center)
+                    * glm::scale(glm::mat4(1.0f), box.size);
+                DrawMesh(m_cube, model, box.color);
+            };
         for (const Wall& surface : level.Surfaces())
             DrawBox(surface);
         for (const Wall& wall : level.Walls())
             DrawBox(wall);
+    }
+
+    void Renderer::DrawBatteryPickup(const BatteryPickup& battery)
+    {
+        if (!battery.available)
+            return;
+
+        const auto drawPart = [&](const glm::vec3& offset, const glm::vec3& size, const glm::vec3& color)
+            {
+                const glm::mat4 model = glm::translate(glm::mat4(1.0f), battery.position + offset)
+                    * glm::scale(glm::mat4(1.0f), size);
+                DrawMesh(m_cube, model, color);
+            };
+
+        // position은 단자까지 포함한 높이 0.30m 배터리의 중심이다.
+        drawPart({ 0.0f, -0.025f, 0.0f }, { 0.14f, 0.25f, 0.14f }, { 0.12f, 0.55f, 0.47f });
+        drawPart({ 0.0f, 0.1125f, 0.0f }, { 0.14f, 0.025f, 0.14f }, { 0.95f, 0.60f, 0.18f });
+        drawPart({ 0.0f, 0.1375f, 0.0f }, { 0.06f, 0.025f, 0.06f }, { 0.85f, 0.86f, 0.88f });
+
+        // 시작 지점에서 보이는 면의 양극 표시.
+        const glm::vec3 marking{ 0.94f, 0.95f, 0.88f };
+        drawPart({ 0.0f, 0.025f, -0.071f }, { 0.066f, 0.014f, 0.004f }, marking);
+        drawPart({ 0.0f, 0.025f, -0.072f }, { 0.014f, 0.066f, 0.004f }, marking);
     }
 
     void Renderer::DrawPlayerBody(const Player& player, const Lantern& lantern)
@@ -102,10 +126,10 @@ namespace ag
         m_sceneShader.SetInt("uUnlit", 1);
         const glm::vec3 spill = glm::vec3(0.85f, 0.76f, 0.64f) * intensity;
         const auto drawPart = [&](const glm::vec3& center, const glm::vec3& size, const glm::vec3& color)
-        {
-            const glm::mat4 model = glm::scale(glm::translate(bodyTransform, center), size);
-            DrawMesh(m_cube, model, color * spill);
-        };
+            {
+                const glm::mat4 model = glm::scale(glm::translate(bodyTransform, center), size);
+                DrawMesh(m_cube, model, color * spill);
+            };
 
         const glm::vec3 trousers{ 0.30f, 0.37f, 0.41f };
         const glm::vec3 boots{ 0.29f, 0.25f, 0.22f };

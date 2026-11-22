@@ -33,6 +33,7 @@ namespace ag
         const ag::Player&  Player() const { return m_player; }
         const ag::Monster& Monster() const { return m_monster; }
         const ag::Lantern& Lantern() const { return m_lantern; }
+        const auto& Batteries() const { return m_batteries; }
 
         int  RaisedLeverCount() const;
         int  CollectedBatteryCount() const;
@@ -55,6 +56,7 @@ namespace ag
         std::array<Note, config::NoteCount> m_notes{};
         ExitDoor m_exitDoor;
 
+        int  m_spareBatteries = 0;
         int  m_nextLeverIndex = 0;   // 다음에 올려야 하는 레버 번호
         bool m_escaped        = false;
         bool m_caught         = false;

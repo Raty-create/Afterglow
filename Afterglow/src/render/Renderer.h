@@ -5,6 +5,7 @@
 
 namespace ag
 {
+    class BatteryPickup;
     class Camera;
     class Lantern;
     class Mesh;
@@ -25,6 +26,7 @@ namespace ag
         void BeginScene(const Camera& camera, const Lantern& lantern, const glm::vec3& lanternDirection);
         void BeginScene(const Camera& camera);
         void DrawLevel(const Level& level);
+        void DrawBatteryPickup(const BatteryPickup& battery);
         void DrawPlayerBody(const Player& player, const Lantern& lantern);
         void DrawHeldLantern(const Lantern& lantern);
 
@@ -35,7 +37,7 @@ namespace ag
 
     private:
         Shader m_sceneShader;
-        Mesh m_cube;
+        Mesh   m_cube;
         int    m_width  = 0;
         int    m_height = 0;
     };

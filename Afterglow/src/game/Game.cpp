@@ -14,6 +14,11 @@ namespace ag
     void Game::Reset()
     {
         m_player.Reset(m_level.SpawnPosition());
+        m_lantern.Refill();
+        m_spareBatteries = 1;
+        m_batteries = {};
+        m_batteries[0].position = { 0.0f, 0.15f, 0.0f };
+        m_batteries[0].available = true;
         m_nextLeverIndex = 0;
         m_escaped        = false;
         m_caught         = false;
@@ -30,21 +35,59 @@ namespace ag
 
         UpdateLanternInput(input);
         m_player.Update(deltaSeconds, input, m_level);
+        UpdateInteraction(input);
         m_lantern.Update(deltaSeconds);
     }
 
     void Game::UpdateLanternInput(const Input& input)
     {
+        // 3단계 밝기 조절
         const float wheel = input.WheelDelta();
         if (wheel > 0.0f)
             m_lantern.StepBrightness(+1);
         else if (wheel < 0.0f)
             m_lantern.StepBrightness(-1);
+
+        // 배터리 교체
+        if (input.WasKeyPressed(GLFW_KEY_R) && m_spareBatteries > 0 && m_lantern.Charge() < 1.0f)
+        {
+            --m_spareBatteries;
+            m_lantern.Refill();
+        }
     }
 
     void Game::UpdateInteraction(const Input& input)
     {
-        
+        if (!input.WasKeyPressed(GLFW_KEY_F))
+            return;
+
+        const auto& camera = m_player.ViewCamera();
+        BatteryPickup* target = nullptr;
+        float nearestDistance = 2.0f;
+
+        for (auto& battery : m_batteries)
+        {
+            if (!battery.available)
+                continue;
+
+            const glm::vec3 offset = battery.position - camera.Position();
+            const float distance = glm::length(offset);
+            if (distance <= 0.001f || distance > nearestDistance)
+                continue;
+
+            // 시선 중심에서 약 26도 안에 있는 배터리만 선택한다.
+            if (glm::dot(camera.Forward(), offset / distance) < 0.9f)
+                continue;
+
+            target = &battery;
+            nearestDistance = distance;
+        }
+
+        if (target)
+        {
+            target->available = false;
+            ++m_spareBatteries;
+        }
     }
 
     void Game::UpdateLevers(const Input& input)

@@ -34,4 +34,14 @@ namespace ag
         constexpr float drainPerSecond[] = { 0.0f, 0.002f, 0.007f, 0.01f };
         m_charge = std::max(0.0f, m_charge - drainPerSecond[m_brightnessIndex] * deltaSeconds);
     }
+
+    float Lantern::Charge() const
+    {
+        return m_charge;
+    }
+
+    void Lantern::Refill()
+    {
+        m_charge = 1.0f;
+    }
 }
