@@ -8,6 +8,12 @@
 
 namespace ag
 {
+    namespace
+    {
+        const glm::vec3 JacketColor{ 0.48f, 0.54f, 0.50f };
+        const glm::vec3 SkinColor{ 0.57f, 0.38f, 0.28f };
+    }
+
     bool Renderer::Initialize(int width, int height)
     {
         SetViewport(width, height);
@@ -101,12 +107,13 @@ namespace ag
             DrawMesh(m_cube, model, color * spill);
         };
 
-        const glm::vec3 jacket{ 0.48f, 0.54f, 0.50f };
         const glm::vec3 trousers{ 0.30f, 0.37f, 0.41f };
         const glm::vec3 boots{ 0.29f, 0.25f, 0.22f };
 
         // 카메라보다 몸통을 살짝 뒤에 두어 고개를 숙였을 때 발끝이 보이게 한다.
-        drawPart({ 0.0f, 1.20f, 0.135f }, { 0.45f, 0.50f, 0.16f }, jacket);
+        drawPart({ 0.0f, 1.20f, 0.135f }, { 0.45f, 0.50f, 0.16f }, JacketColor);
+        drawPart({ -0.26f, 1.30f, 0.105f }, { 0.08f, 0.30f, 0.06f }, JacketColor);
+        drawPart({ -0.26f, 1.115f, 0.105f }, { 0.07f, 0.09f, 0.05f }, SkinColor);
         drawPart({ 0.0f, 0.88f, 0.135f }, { 0.45f, 0.16f, 0.16f }, trousers);
         for (float x : { -0.11f, 0.11f })
         {
@@ -139,8 +146,9 @@ namespace ag
                 DrawMesh(m_cube, model, color * intensity);
             };
 
-        // 손과 손목
-        drawBox({ 0.25f, -0.12f, -0.35f }, { 0.07f, 0.05f, 0.30f }, { 0.57f, 0.38f, 0.28f });
+        // 오른쪽 재킷 소매와 손잡이를 쥔 손
+        drawBox({ 0.25f, -0.12f, -0.31f }, { 0.08f, 0.06f, 0.22f }, JacketColor);
+        drawBox({ 0.25f, -0.12f, -0.455f }, { 0.07f, 0.05f, 0.09f }, SkinColor);
 
         // 랜턴 손잡이
         drawBox({ 0.25f, -0.12f, -0.48f }, { 0.10f, 0.01f, 0.01f }, { 0.25f, 0.23f, 0.24f });
