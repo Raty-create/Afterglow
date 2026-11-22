@@ -187,6 +187,7 @@
     <ClInclude Include="src\OpenGLHeaders.h" />
     <ClInclude Include="src\platform\Input.h" />
     <ClInclude Include="src\platform\Window.h" />
+    <ClInclude Include="src\render\BoxSurface.h" />
     <ClInclude Include="src\render\Camera.h" />
     <ClInclude Include="src\render\Mesh.h" />
     <ClInclude Include="src\render\Renderer.h" />

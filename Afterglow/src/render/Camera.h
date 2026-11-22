@@ -11,7 +11,7 @@ namespace ag
         void SetPosition(const glm::vec3& position) { m_position = position; }
         const glm::vec3& Position() const { return m_position; }
 
-        // 마우스 이동량(픽셀)을 받아 회전한다. pitch는 상하 한계로 제한된다.
+        // 마우스 이동을 각도(도)로 변환한 값을 받는다.
         void AddLook(float deltaXDeg, float deltaYDeg);
 
         void SetFovY(float degrees) { m_fovYDeg = degrees; }
@@ -28,7 +28,7 @@ namespace ag
         float m_yawDeg   = 0.0f;   // 좌우 회전 (y축)
         float m_pitchDeg = 0.0f;   // 상하 회전
         float m_fovYDeg  = 70.0f;
-        float m_nearZ    = 0.05f;
+        float m_nearZ    = 0.08f;
         float m_farZ     = 100.0f;
     };
 }

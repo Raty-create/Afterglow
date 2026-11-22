@@ -8,7 +8,8 @@ namespace ag
     class BatteryPickup
     {
     public:
-        
+        glm::vec3 position{ 0.0f };
+        bool available = false;
 
     private:
         

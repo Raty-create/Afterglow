@@ -13,6 +13,7 @@ namespace ag
         void Destroy();
         bool ShouldClose() const;
         bool PumpMessages();
+        void CaptureCursor();
         void SwapBuffers();
 
         int Width() const { return m_width; }
@@ -23,5 +24,8 @@ namespace ag
         Input* m_input       = nullptr;
         int    m_width       = 0;
         int    m_height      = 0;
+        double m_cursorX     = 0.0;
+        double m_cursorY     = 0.0;
+        bool   m_hasCursorSample = false;
     };
 }

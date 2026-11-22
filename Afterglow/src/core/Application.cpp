@@ -26,12 +26,12 @@ namespace ag
         m_hud  = new HUD();
         m_overlay = new ScreenOverlay();
 
-        if (!m_game->Initialize())
+        if (!m_game->Initialize() || !m_renderer->PrepareLevel(m_game->Level()) || !m_hud->Initialize())
             return false;
 
-        m_mapCamera.SetPosition(m_game->Level().SpawnPosition());
         m_time.Reset();
         m_screen  = ScreenState::Playing;
+        m_window->CaptureCursor();
         m_running = true;
         return true;
     }
@@ -72,15 +72,35 @@ namespace ag
             m_running = false;
             return;
         }
+
+        if (m_screen == ScreenState::Playing)
+        {
+            m_game->Update(deltaSeconds, m_input);
+            if (m_game->IsEscaped())
+                m_screen = ScreenState::Escaped;
+        }
     }
 
     void Application::Render()
     {
-        glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
+        if (m_screen == ScreenState::Escaped)
+            glClearColor(0.34f, 0.39f, 0.42f, 1.0f);
+        else
+            glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        m_renderer->BeginScene(m_mapCamera);
-        m_renderer->DrawLevel(m_game->Level());
+        const auto& camera = m_game->Player().ViewCamera();
+        m_renderer->BeginScene(camera, m_game->Lantern(), camera.Forward());
+        m_renderer->DrawLevel();
+        for (const auto& battery : m_game->Batteries())
+            m_renderer->DrawBatteryPickup(battery);
+        for (const auto& lever : m_game->Levers())
+            m_renderer->DrawLever(lever);
+        m_renderer->DrawPlayerBody(m_game->Player(), m_game->Lantern());
+        m_renderer->DrawHeldLantern(m_game->Lantern());
         m_renderer->EndScene();
+        if (m_screen == ScreenState::Playing)
+            m_hud->RenderBattery(m_game->Lantern().Charge(), m_game->SpareBatteries(),
+                m_window->Width(), m_window->Height(), m_time.DeltaSeconds());
     }
 
     void Application::Shutdown()
@@ -88,6 +108,8 @@ namespace ag
         m_running = false;
 
         delete m_overlay;
+        if (m_hud)
+            m_hud->Shutdown();
         delete m_hud;
         delete m_game;
 

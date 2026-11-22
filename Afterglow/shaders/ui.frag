@@ -7,6 +7,7 @@ in vec2 vUV;
 uniform vec4      uColor;
 uniform sampler2D uTexture;
 uniform int       uUseTexture;
+uniform float     uFillRightPx;
 
 out vec4 fragColor;
 
@@ -15,6 +16,8 @@ void main()
     vec4 base = uColor;
     if (uUseTexture == 1)
         base.a *= texture(uTexture, vUV).r;
+    if (uFillRightPx > 0.0)
+        base.a *= clamp(uFillRightPx - (gl_FragCoord.x - 0.5), 0.0, 1.0);
 
     fragColor = base;
 }

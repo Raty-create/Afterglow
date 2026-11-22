@@ -120,6 +120,9 @@
     <ClCompile Include="src\render\Camera.cpp">
       <Filter>src\render</Filter>
     </ClCompile>
+    <ClInclude Include="src\render\BoxSurface.h">
+      <Filter>src\render</Filter>
+    </ClInclude>
     <ClInclude Include="src\render\Camera.h">
       <Filter>src\render</Filter>
     </ClInclude>

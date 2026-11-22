@@ -14,11 +14,14 @@ namespace ag::config
 
     /* ------------------------- 플레이어 ------------------------- */
     inline constexpr float PitchLimitDeg = 85.0f;
+    inline constexpr float MouseSensitivity = 0.10f;    // 도/픽셀
+    inline constexpr float PlayerWalkSpeed = 3.0f;      // m/초
+    inline constexpr float PlayerEyeHeight = 1.6f;      // m
 
     /* --------------------------- 진행 --------------------------- */
     // 레버는 3개이며 정해진 순서대로 올려야 한다. 틀리면 전부 초기화된다.
     inline constexpr int LeverCount = 3;
-    inline constexpr int BatteryPickupCount = 5;  // 맵에 배치되는 배터리 수
+    inline constexpr int BatteryPickupCount = 8;  // 맵에 배치되는 배터리 수
     inline constexpr int NoteCount = 3;  // 맵에 배치되는 메모 수
 
     /* --------------------------- 화면 --------------------------- */

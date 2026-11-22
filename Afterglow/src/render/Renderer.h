@@ -5,10 +5,13 @@
 
 namespace ag
 {
+    class BatteryPickup;
     class Camera;
     class Lantern;
+    class Lever;
     class Mesh;
     class Level;
+    class Player;
 
     // OpenGL 렌더링 진입점.
     // 씬 셰이더 하나로 불을 받는 모든 지오메트리(벽/바닥/괴물/소품)를 그린다.
@@ -16,6 +19,7 @@ namespace ag
     {
     public:
         bool Initialize(int width, int height);
+        bool PrepareLevel(const Level& level);
         void Shutdown();
 
         void SetViewport(int width, int height);
@@ -23,7 +27,11 @@ namespace ag
         // 뷰/투영 행렬과 랜턴(스포트라이트) 파라미터를 셰이더에 올린다.
         void BeginScene(const Camera& camera, const Lantern& lantern, const glm::vec3& lanternDirection);
         void BeginScene(const Camera& camera);
-        void DrawLevel(const Level& level);
+        void DrawLevel();
+        void DrawBatteryPickup(const BatteryPickup& battery);
+        void DrawLever(const Lever& lever);
+        void DrawPlayerBody(const Player& player, const Lantern& lantern);
+        void DrawHeldLantern(const Lantern& lantern);
 
         void DrawMesh(const Mesh& mesh, const glm::mat4& model, const glm::vec3& color);
 
@@ -32,7 +40,12 @@ namespace ag
 
     private:
         Shader m_sceneShader;
-        Mesh m_cube;
+        Mesh   m_cube;
+        Mesh   m_levelMesh;
+        Mesh   m_batteryMesh;
+        Mesh   m_leverHousingMesh;
+        Mesh   m_leverHandleMesh;
+        Mesh   m_heldLanternMesh;
         int    m_width  = 0;
         int    m_height = 0;
     };
