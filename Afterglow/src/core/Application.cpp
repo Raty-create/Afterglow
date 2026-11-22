@@ -84,6 +84,7 @@ namespace ag
         const auto& camera = m_game->Player().ViewCamera();
         m_renderer->BeginScene(camera, m_game->Lantern(), camera.Forward());
         m_renderer->DrawLevel(m_game->Level());
+        m_renderer->DrawPlayerBody(m_game->Player(), m_game->Lantern());
         m_renderer->DrawHeldLantern(m_game->Lantern());
         m_renderer->EndScene();
     }

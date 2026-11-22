@@ -4,6 +4,7 @@
 #include "render/Mesh.h"
 #include "game/Level.h"
 #include "game/Lantern.h"
+#include "game/Player.h"
 
 namespace ag
 {
@@ -74,6 +75,46 @@ namespace ag
             DrawBox(surface);
         for (const Wall& wall : level.Walls())
             DrawBox(wall);
+    }
+
+    void Renderer::DrawPlayerBody(const Player& player, const Lantern& lantern)
+    {
+        const float intensity = lantern.Light().intensity;
+        if (intensity <= 0.0f)
+            return;
+
+        const glm::vec3 right = player.ViewCamera().Right();
+        const glm::vec3 up{ 0.0f, 1.0f, 0.0f };
+        const glm::mat4 bodyTransform{
+            glm::vec4(right, 0.0f),
+            glm::vec4(up, 0.0f),
+            glm::vec4(glm::cross(right, up), 0.0f),
+            glm::vec4(player.FeetPosition(), 1.0f)
+        };
+
+        // 가까운 옷과 신발에 랜턴 빛이 은은하게 퍼지는 효과를 색으로 표현한다.
+        m_sceneShader.SetInt("uUnlit", 1);
+        const glm::vec3 spill = glm::vec3(0.85f, 0.76f, 0.64f) * intensity;
+        const auto drawPart = [&](const glm::vec3& center, const glm::vec3& size, const glm::vec3& color)
+        {
+            const glm::mat4 model = glm::scale(glm::translate(bodyTransform, center), size);
+            DrawMesh(m_cube, model, color * spill);
+        };
+
+        const glm::vec3 jacket{ 0.48f, 0.54f, 0.50f };
+        const glm::vec3 trousers{ 0.30f, 0.37f, 0.41f };
+        const glm::vec3 boots{ 0.29f, 0.25f, 0.22f };
+
+        // 카메라보다 몸통을 살짝 뒤에 두어 고개를 숙였을 때 발끝이 보이게 한다.
+        drawPart({ 0.0f, 1.20f, 0.135f }, { 0.45f, 0.50f, 0.16f }, jacket);
+        drawPart({ 0.0f, 0.88f, 0.135f }, { 0.45f, 0.16f, 0.16f }, trousers);
+        for (float x : { -0.11f, 0.11f })
+        {
+            drawPart({ x, 0.68f, 0.127f }, { 0.17f, 0.32f, 0.16f }, trousers);
+            drawPart({ x, 0.29f, 0.125f }, { 0.14f, 0.49f, 0.17f }, trousers * 0.88f);
+            drawPart({ x, 0.075f, 0.02f }, { 0.16f, 0.15f, 0.27f }, boots);
+        }
+        m_sceneShader.SetInt("uUnlit", 0);
     }
 
     void Renderer::DrawHeldLantern(const Lantern& lantern)

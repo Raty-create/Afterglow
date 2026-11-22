@@ -30,6 +30,7 @@ namespace ag
 
         UpdateLanternInput(input);
         m_player.Update(deltaSeconds, input, m_level);
+        m_lantern.Update(deltaSeconds);
     }
 
     void Game::UpdateLanternInput(const Input& input)

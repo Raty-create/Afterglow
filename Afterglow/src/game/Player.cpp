@@ -12,6 +12,11 @@ namespace ag
         m_camera.SetPosition(spawnPosition);
     }
 
+    glm::vec3 Player::FeetPosition() const
+    {
+        return m_camera.Position() - glm::vec3(0.0f, config::PlayerEyeHeight, 0.0f);
+    }
+
     void Player::Update(float deltaSeconds, const Input& input, const Level& level)
     {
         m_camera.AddLook(input.MouseDeltaX() * config::MouseSensitivity,
@@ -43,7 +48,7 @@ namespace ag
         const glm::vec3 step = displacement / static_cast<float>(stepCount);
 
         const glm::vec3 bodyHalfSize(0.25f, 0.9f, 0.25f);
-        const glm::vec3 eyeToBodyCenter(0.0f, bodyHalfSize.y - 1.6f, 0.0f);
+        const glm::vec3 eyeToBodyCenter(0.0f, bodyHalfSize.y - config::PlayerEyeHeight, 0.0f);
 
         glm::vec3 position = m_camera.Position();
         for (int i = 0; i < stepCount; ++i)

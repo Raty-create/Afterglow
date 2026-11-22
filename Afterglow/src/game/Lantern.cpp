@@ -19,6 +19,19 @@ namespace ag
             { 1.00f, 18.0f }    // 강
         };
 
-        return levels[m_brightnessIndex];
+        if (m_charge <= 0.0f)
+            return { 0.0f, 0.0f };
+
+        LightSettings light = levels[m_brightnessIndex];
+        light.intensity *= m_charge;
+        light.range *= std::sqrtf(m_charge);
+        return light;
+    }
+
+    void Lantern::Update(float deltaSeconds)
+    {
+        // 꺼짐, 약, 중, 강의 초당 소모량
+        constexpr float drainPerSecond[] = { 0.0f, 0.002f, 0.007f, 0.01f };
+        m_charge = std::max(0.0f, m_charge - drainPerSecond[m_brightnessIndex] * deltaSeconds);
     }
 }

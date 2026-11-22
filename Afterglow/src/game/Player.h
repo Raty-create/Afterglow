@@ -14,6 +14,7 @@ namespace ag
         void Reset(const glm::vec3& spawnPosition);
         void Update(float deltaSeconds, const Input& input, const Level& level);
         const Camera& ViewCamera() const { return m_camera; }
+        glm::vec3 FeetPosition() const;
 
     private:
         Camera m_camera;

@@ -18,7 +18,13 @@ namespace ag
         void StepBrightness(int direction);
         LightSettings Light() const;
 
+        void Update(float deltaSeconds);
+
+        void Charge();
+        void Refill();
+
     private:
-        int m_brightnessIndex = 2;
+        int   m_brightnessIndex = 2;
+        float m_charge = 1.0f;
     };
 }

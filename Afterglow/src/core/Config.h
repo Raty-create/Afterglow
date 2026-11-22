@@ -16,6 +16,7 @@ namespace ag::config
     inline constexpr float PitchLimitDeg = 85.0f;
     inline constexpr float MouseSensitivity = 0.10f;    // 도/픽셀
     inline constexpr float PlayerWalkSpeed = 3.0f;      // m/초
+    inline constexpr float PlayerEyeHeight = 1.6f;      // m
 
     /* --------------------------- 진행 --------------------------- */
     // 레버는 3개이며 정해진 순서대로 올려야 한다. 틀리면 전부 초기화된다.

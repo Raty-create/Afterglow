@@ -45,7 +45,7 @@ namespace ag
         std::vector<Wall> m_walls;
         // 바닥/천장은 수평 이동의 벽 충돌 대상과 분리한다.
         std::vector<Wall> m_surfaces;
-        glm::vec3 m_spawnPosition{ 0.0f, 1.6f, -2.0f };
+        glm::vec3 m_spawnPosition{ 0.0f, config::PlayerEyeHeight, -2.0f };
 
         void AddRoom(const RoomDesc& room, const std::vector<DoorwayDesc>& doors = {});
     };

@@ -9,6 +9,7 @@ namespace ag
     class Lantern;
     class Mesh;
     class Level;
+    class Player;
 
     // OpenGL 렌더링 진입점.
     // 씬 셰이더 하나로 불을 받는 모든 지오메트리(벽/바닥/괴물/소품)를 그린다.
@@ -24,6 +25,7 @@ namespace ag
         void BeginScene(const Camera& camera, const Lantern& lantern, const glm::vec3& lanternDirection);
         void BeginScene(const Camera& camera);
         void DrawLevel(const Level& level);
+        void DrawPlayerBody(const Player& player, const Lantern& lantern);
         void DrawHeldLantern(const Lantern& lantern);
 
         void DrawMesh(const Mesh& mesh, const glm::mat4& model, const glm::vec3& color);
