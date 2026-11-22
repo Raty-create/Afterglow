@@ -81,6 +81,12 @@ namespace ag
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
     }
 
+    void Shader::SetVec4(const char* name, const glm::vec4& value) const
+    {
+        const GLint location = glGetUniformLocation(m_shaderProgram, name);
+        glUniform4fv(location, 1, glm::value_ptr(value));
+    }
+
     bool Shader::Build(const char* vertexSource, const char* fragmentSource)
     {
         const GLuint vertex = Compile(GL_VERTEX_SHADER, vertexSource);

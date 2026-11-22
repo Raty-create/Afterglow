@@ -26,7 +26,7 @@ namespace ag
         m_hud  = new HUD();
         m_overlay = new ScreenOverlay();
 
-        if (!m_game->Initialize())
+        if (!m_game->Initialize() || !m_hud->Initialize())
             return false;
 
         m_time.Reset();
@@ -89,6 +89,9 @@ namespace ag
         m_renderer->DrawPlayerBody(m_game->Player(), m_game->Lantern());
         m_renderer->DrawHeldLantern(m_game->Lantern());
         m_renderer->EndScene();
+        if (m_screen == ScreenState::Playing)
+            m_hud->RenderBattery(m_game->Lantern().Charge(), m_game->SpareBatteries(),
+                m_window->Width(), m_window->Height(), m_time.DeltaSeconds());
     }
 
     void Application::Shutdown()
@@ -96,6 +99,8 @@ namespace ag
         m_running = false;
 
         delete m_overlay;
+        if (m_hud)
+            m_hud->Shutdown();
         delete m_hud;
         delete m_game;
 
