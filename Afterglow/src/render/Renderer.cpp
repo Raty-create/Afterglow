@@ -1,6 +1,7 @@
 #include "render/Renderer.h"
 
 #include "game/BatteryPickup.h"
+#include "render/BoxSurface.h"
 #include "render/Camera.h"
 #include "render/Mesh.h"
 #include "game/Level.h"
@@ -13,6 +14,37 @@ namespace ag
     {
         const glm::vec3 JacketColor{ 0.48f, 0.54f, 0.50f };
         const glm::vec3 SkinColor{ 0.57f, 0.38f, 0.28f };
+
+        // 부품이 겹치는 손잡이와 양극 표시도 레벨 구조물과 같은 방식으로 합친다.
+        const Wall BatteryParts[] = {
+            { { 0.0f, -0.025f, 0.0f }, { 0.14f, 0.25f, 0.14f }, { 0.12f, 0.55f, 0.47f } },
+            { { 0.0f, 0.1125f, 0.0f }, { 0.14f, 0.025f, 0.14f }, { 0.95f, 0.60f, 0.18f } },
+            { { 0.0f, 0.1375f, 0.0f }, { 0.06f, 0.025f, 0.06f }, { 0.85f, 0.86f, 0.88f } },
+            { { 0.0f, 0.025f, -0.071f }, { 0.066f, 0.014f, 0.004f }, { 0.94f, 0.95f, 0.88f } },
+            { { 0.0f, 0.025f, -0.071f }, { 0.014f, 0.066f, 0.004f }, { 0.94f, 0.95f, 0.88f } }
+        };
+        const Wall HeldLanternParts[] = {
+            { { 0.25f, -0.12f, -0.31f }, { 0.08f, 0.06f, 0.22f }, JacketColor },
+            { { 0.25f, -0.12f, -0.455f }, { 0.07f, 0.05f, 0.09f }, SkinColor },
+            { { 0.25f, -0.12f, -0.48f }, { 0.10f, 0.01f, 0.01f }, { 0.25f, 0.23f, 0.24f } },
+            { { 0.20f, -0.15f, -0.48f }, { 0.01f, 0.07f, 0.01f }, { 0.25f, 0.23f, 0.24f } },
+            { { 0.30f, -0.15f, -0.48f }, { 0.01f, 0.07f, 0.01f }, { 0.25f, 0.23f, 0.24f } },
+            { { 0.25f, -0.18f, -0.48f }, { 0.12f, 0.03f, 0.12f }, { 0.21f, 0.23f, 0.24f } },
+            { { 0.25f, -0.33f, -0.48f }, { 0.12f, 0.03f, 0.12f }, { 0.21f, 0.23f, 0.24f } },
+            { { 0.25f, -0.255f, -0.48f }, { 0.09f, 0.12f, 0.09f }, { 1.00f, 0.75f, 0.35f } }
+        };
+
+        bool UploadBoxSurface(Mesh& mesh, std::span<const Wall> boxes)
+        {
+            std::vector<GLfloat> vertices;
+            std::vector<GLuint> indices;
+            BuildBoxSurface(boxes, vertices, indices);
+            if (indices.empty())
+                return false;
+
+            mesh.Upload(vertices, indices);
+            return mesh.IsValid();
+        }
     }
 
     bool Renderer::Initialize(int width, int height)
@@ -21,11 +53,16 @@ namespace ag
         glDepthFunc(GL_LESS);
         glClearDepth(1.0);
         return m_sceneShader.LoadFromFiles("shaders/scene.vert", "shaders/scene.frag")
-            && m_cube.CreateCube(1.0f, 1.0f, 1.0f);
+            && m_cube.CreateCube(1.0f, 1.0f, 1.0f)
+            && UploadBoxSurface(m_batteryMesh, BatteryParts)
+            && UploadBoxSurface(m_heldLanternMesh, HeldLanternParts);
     }
 
     void Renderer::Shutdown()
     {
+        m_levelMesh.Destroy();
+        m_batteryMesh.Destroy();
+        m_heldLanternMesh.Destroy();
         m_cube.Destroy();
         m_sceneShader.Destroy();
     }
@@ -70,18 +107,20 @@ namespace ag
         mesh.Draw();
     }
 
-    void Renderer::DrawLevel(const Level& level)
+    bool Renderer::PrepareLevel(const Level& level)
     {
-        const auto DrawBox = [this](const Wall& box)
-            {
-                const glm::mat4 model = glm::translate(glm::mat4(1.0f), box.center)
-                    * glm::scale(glm::mat4(1.0f), box.size);
-                DrawMesh(m_cube, model, box.color);
-            };
-        for (const Wall& surface : level.Surfaces())
-            DrawBox(surface);
-        for (const Wall& wall : level.Walls())
-            DrawBox(wall);
+        std::vector<Wall> boxes;
+        boxes.reserve(level.Walls().size() + level.Fixtures().size() + level.Surfaces().size());
+        boxes.insert(boxes.end(), level.Walls().begin(), level.Walls().end());
+        boxes.insert(boxes.end(), level.Fixtures().begin(), level.Fixtures().end());
+        boxes.insert(boxes.end(), level.Surfaces().begin(), level.Surfaces().end());
+
+        return UploadBoxSurface(m_levelMesh, boxes);
+    }
+
+    void Renderer::DrawLevel()
+    {
+        DrawMesh(m_levelMesh, glm::mat4(1.0f), glm::vec3(1.0f));
     }
 
     void Renderer::DrawBatteryPickup(const BatteryPickup& battery)
@@ -89,22 +128,7 @@ namespace ag
         if (!battery.available)
             return;
 
-        const auto drawPart = [&](const glm::vec3& offset, const glm::vec3& size, const glm::vec3& color)
-            {
-                const glm::mat4 model = glm::translate(glm::mat4(1.0f), battery.position + offset)
-                    * glm::scale(glm::mat4(1.0f), size);
-                DrawMesh(m_cube, model, color);
-            };
-
-        // position은 단자까지 포함한 높이 0.30m 배터리의 중심이다.
-        drawPart({ 0.0f, -0.025f, 0.0f }, { 0.14f, 0.25f, 0.14f }, { 0.12f, 0.55f, 0.47f });
-        drawPart({ 0.0f, 0.1125f, 0.0f }, { 0.14f, 0.025f, 0.14f }, { 0.95f, 0.60f, 0.18f });
-        drawPart({ 0.0f, 0.1375f, 0.0f }, { 0.06f, 0.025f, 0.06f }, { 0.85f, 0.86f, 0.88f });
-
-        // 시작 지점에서 보이는 면의 양극 표시.
-        const glm::vec3 marking{ 0.94f, 0.95f, 0.88f };
-        drawPart({ 0.0f, 0.025f, -0.071f }, { 0.066f, 0.014f, 0.004f }, marking);
-        drawPart({ 0.0f, 0.025f, -0.072f }, { 0.014f, 0.066f, 0.004f }, marking);
+        DrawMesh(m_batteryMesh, glm::translate(glm::mat4(1.0f), battery.position), glm::vec3(1.0f));
     }
 
     void Renderer::DrawPlayerBody(const Player& player, const Lantern& lantern)
@@ -159,32 +183,10 @@ namespace ag
 
         m_sceneShader.SetInt("uUnlit", 1);
 
-        // 카메라 공간에서 +X는 오른쪽, +Y는 위, -Z는 앞이다.
         // BeginScene()에서 설정한 투영 행렬은 그래도 사용한다.
         m_sceneShader.SetMat4("view", glm::mat4(1.0f));
 
-        const auto drawBox = [this, intensity](const glm::vec3& center, const glm::vec3& size, const glm::vec3& color)
-            {
-                const glm::mat4 model = glm::translate(glm::mat4(1.0f), center)
-                    * glm::scale(glm::mat4(1.0f), size);
-                DrawMesh(m_cube, model, color * intensity);
-            };
-
-        // 오른쪽 재킷 소매와 손잡이를 쥔 손
-        drawBox({ 0.25f, -0.12f, -0.31f }, { 0.08f, 0.06f, 0.22f }, JacketColor);
-        drawBox({ 0.25f, -0.12f, -0.455f }, { 0.07f, 0.05f, 0.09f }, SkinColor);
-
-        // 랜턴 손잡이
-        drawBox({ 0.25f, -0.12f, -0.48f }, { 0.10f, 0.01f, 0.01f }, { 0.25f, 0.23f, 0.24f });
-        drawBox({ 0.20f, -0.15f, -0.48f }, { 0.01f, 0.07f, 0.01f }, { 0.25f, 0.23f, 0.24f });
-        drawBox({ 0.30f, -0.15f, -0.48f }, { 0.01f, 0.07f, 0.01f }, { 0.25f, 0.23f, 0.24f });
-
-        // 랜턴 몸체
-        drawBox({ 0.25f, -0.18f, -0.48f }, { 0.12f, 0.03f, 0.12f }, { 0.21f, 0.23f, 0.24f });
-        drawBox({ 0.25f, -0.33f, -0.48f }, { 0.12f, 0.03f, 0.12f }, { 0.21f, 0.23f, 0.24f });
-
-        // 카메라에서 보이는 임시 발광부
-        drawBox({ 0.25f, -0.255f, -0.48f }, { 0.09f, 0.12f, 0.09f }, { 1.00f, 0.75f, 0.35f });
+        DrawMesh(m_heldLanternMesh, glm::mat4(1.0f), glm::vec3(intensity));
     }
 
     void Renderer::EndScene()

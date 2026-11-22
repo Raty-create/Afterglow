@@ -51,17 +51,25 @@ namespace ag
         const glm::vec3 eyeToBodyCenter(0.0f, bodyHalfSize.y - config::PlayerEyeHeight, 0.0f);
 
         glm::vec3 position = m_camera.Position();
+        const auto tryMove = [&](glm::vec3 candidate)
+        {
+            const float currentFloorY = position.y - config::PlayerEyeHeight;
+            float nextFloorY;
+            if (!level.TryGetFloor({ candidate.x, candidate.z }, currentFloorY, nextFloorY))
+                return;
+            candidate.y = nextFloorY + config::PlayerEyeHeight;
+            if (!level.IntersectsWall(candidate + eyeToBodyCenter, bodyHalfSize))
+                position = candidate;
+        };
         for (int i = 0; i < stepCount; ++i)
         {
             glm::vec3 candidate = position;
             candidate.x += step.x;
-            if (!level.IntersectsWall(candidate + eyeToBodyCenter, bodyHalfSize))
-                position = candidate;
+            tryMove(candidate);
 
             candidate = position;   // X 이동 결과를 반영한 위치에서 Z를 검사한다.
             candidate.z += step.z;
-            if (!level.IntersectsWall(candidate + eyeToBodyCenter, bodyHalfSize))
-                position = candidate;
+            tryMove(candidate);
         }
 
         m_camera.SetPosition(position);

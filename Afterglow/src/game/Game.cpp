@@ -16,9 +16,12 @@ namespace ag
         m_player.Reset(m_level.SpawnPosition());
         m_lantern.Refill();
         m_spareBatteries = 1;
-        m_batteries = {};
-        m_batteries[0].position = { 0.0f, 0.15f, 0.0f };
-        m_batteries[0].available = true;
+        const auto& batteryPositions = m_level.BatteryPositions();
+        for (std::size_t i = 0; i < m_batteries.size(); ++i)
+        {
+            m_batteries[i].position = batteryPositions[i];
+            m_batteries[i].available = true;
+        }
         m_nextLeverIndex = 0;
         m_escaped        = false;
         m_caught         = false;
@@ -35,6 +38,11 @@ namespace ag
 
         UpdateLanternInput(input);
         m_player.Update(deltaSeconds, input, m_level);
+        if (m_level.ReachedExit(m_player.FeetPosition()))
+        {
+            m_escaped = true;
+            return;
+        }
         UpdateInteraction(input);
         m_lantern.Update(deltaSeconds);
     }

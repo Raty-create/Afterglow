@@ -21,7 +21,7 @@ namespace ag::config
     /* --------------------------- 진행 --------------------------- */
     // 레버는 3개이며 정해진 순서대로 올려야 한다. 틀리면 전부 초기화된다.
     inline constexpr int LeverCount = 3;
-    inline constexpr int BatteryPickupCount = 5;  // 맵에 배치되는 배터리 수
+    inline constexpr int BatteryPickupCount = 8;  // 맵에 배치되는 배터리 수
     inline constexpr int NoteCount = 3;  // 맵에 배치되는 메모 수
 
     /* --------------------------- 화면 --------------------------- */

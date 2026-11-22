@@ -26,7 +26,7 @@ namespace ag
         m_hud  = new HUD();
         m_overlay = new ScreenOverlay();
 
-        if (!m_game->Initialize() || !m_hud->Initialize())
+        if (!m_game->Initialize() || !m_renderer->PrepareLevel(m_game->Level()) || !m_hud->Initialize())
             return false;
 
         m_time.Reset();
@@ -74,16 +74,23 @@ namespace ag
         }
 
         if (m_screen == ScreenState::Playing)
+        {
             m_game->Update(deltaSeconds, m_input);
+            if (m_game->IsEscaped())
+                m_screen = ScreenState::Escaped;
+        }
     }
 
     void Application::Render()
     {
-        glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
+        if (m_screen == ScreenState::Escaped)
+            glClearColor(0.34f, 0.39f, 0.42f, 1.0f);
+        else
+            glClearColor(0.08f, 0.10f, 0.12f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         const auto& camera = m_game->Player().ViewCamera();
         m_renderer->BeginScene(camera, m_game->Lantern(), camera.Forward());
-        m_renderer->DrawLevel(m_game->Level());
+        m_renderer->DrawLevel();
         for (const auto& battery : m_game->Batteries())
             m_renderer->DrawBatteryPickup(battery);
         m_renderer->DrawPlayerBody(m_game->Player(), m_game->Lantern());
